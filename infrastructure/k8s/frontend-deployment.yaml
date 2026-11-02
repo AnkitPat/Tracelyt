@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tracelyt-frontend
+  labels:
+    app: tracelyt-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tracelyt-frontend
+  template:
+    metadata:
+      labels:
+        app: tracelyt-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: tracelyt/frontend:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NEXT_PUBLIC_API_URL
+          value: "http://tracelyt-backend-svc.default.svc.cluster.local"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tracelyt-frontend-svc
+spec:
+  selector:
+    app: tracelyt-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: LoadBalancer

@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tracelyt-backend
+  labels:
+    app: tracelyt-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tracelyt-backend
+  template:
+    metadata:
+      labels:
+        app: tracelyt-backend
+    spec:
+      containers:
+      - name: backend
+        image: tracelyt/backend:latest
+        ports:
+        - containerPort: 4000
+        env:
+        - name: PORT
+          value: "4000"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: tracelyt-secrets
+              key: database-url
+        - name: CLICKHOUSE_URL
+          value: "http://clickhouse.default.svc.cluster.local:8123"
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: tracelyt-secrets
+              key: openai-api-key
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tracelyt-backend-svc
+spec:
+  selector:
+    app: tracelyt-backend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 4000
+  type: ClusterIP
