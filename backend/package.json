@@ -4,24 +4,27 @@
   "description": "Backend for Tracelyt observability platform",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "dev": "npm run build --prefix ../sdk && ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "migrate": "tsx src/migrate.ts",
+    "seed": "tsx src/seed.ts",
+    "test": "npm run build --prefix ../sdk && node --import tsx --test --experimental-test-isolation=process --test-concurrency=1 src/keys.test.ts src/events/validate.test.ts src/app.test.ts src/db/storage.integration.test.ts src/metrics.integration.test.ts"
   },
   "dependencies": {
+    "@clickhouse/client": "^1.12.1",
     "@fastify/cors": "^11.4.0",
     "@opentelemetry/auto-instrumentations-node": "^0.81.2",
     "@opentelemetry/exporter-trace-otlp-http": "^0.223.0",
     "@opentelemetry/sdk-node": "^0.223.0",
-    "cors": "^2.8.6",
+    "@tracelyt/sdk": "workspace:*",
     "dotenv": "^16.6.1",
-    "express": "^4.22.3",
-    "fastify": "^5.12.8"
+    "fastify": "^5.12.8",
+    "pg": "^8.16.3"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.19",
-    "@types/express": "^4.17.25",
     "@types/node": "^20.19.43",
+    "@types/pg": "^8.15.5",
     "ts-node-dev": "^2.0.0",
     "tsx": "^4.23.15",
     "typescript": "^5.9.3"

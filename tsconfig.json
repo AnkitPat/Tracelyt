@@ -10,7 +10,7 @@
     "declaration": true,
     "baseUrl": ".",
     "paths": {
-      "@tracelyt/*": ["packages/*/src"]
+      "@tracelyt/sdk": ["sdk/src/index.ts"]
     }
   },
   "exclude": ["node_modules"]
