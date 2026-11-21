@@ -1,0 +1,45 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: tracelyt-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: tracelyt
+      TZ: UTC
+    ports:
+      - "5432:5432"
+    volumes:
+      - tracelyt-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d tracelyt"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.8
+    container_name: tracelyt-clickhouse
+    environment:
+      TZ: UTC
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: tracelyt
+      CLICKHOUSE_DB: tracelyt
+    ports:
+      - "8123:8123"
+    volumes:
+      - tracelyt-clickhouse:/var/lib/clickhouse
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    healthcheck:
+      test: ["CMD", "clickhouse-client", "--user", "default", "--password", "tracelyt", "--query", "SELECT 1"]
+      interval: 3s
+      timeout: 5s
+      retries: 40
+      start_period: 10s
+
+volumes:
+  tracelyt-postgres:
+  tracelyt-clickhouse:

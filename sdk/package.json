@@ -1,13 +1,38 @@
 {
   "name": "@tracelyt/sdk",
   "version": "0.1.0",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "tsc"
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./apollo": {
+      "types": "./dist/apollo.d.ts",
+      "default": "./dist/apollo.js"
+    }
   },
-  "dependencies": {},
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepare": "tsc -p tsconfig.json",
+    "test": "node --import tsx --test src/client.test.ts src/apollo.test.ts",
+    "sample": "tsx scripts/send-sample.ts"
+  },
+  "peerDependencies": {
+    "@apollo/client": "^3.11.0"
+  },
+  "peerDependenciesMeta": {
+    "@apollo/client": {
+      "optional": true
+    }
+  },
   "devDependencies": {
-    "typescript": "^5.0.0"
+    "@apollo/client": "^3.13.8",
+    "@types/node": "^20.19.43",
+    "graphql": "^16.11.0",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
   }
 }
